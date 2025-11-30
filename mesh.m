@@ -1,0 +1,68 @@
+clearvars
+close all
+
+fileName = 'mesh.png';
+
+nodes = [
+    0,0;
+    1,0;
+    1/2, 1/2;
+    -1/2, 1/2;
+    -1,0;
+    -1/2,-1/2;
+    1/2,-1/2
+    ];
+
+elem = [
+    2, 3, 1;
+    4, 1, 3;
+    1, 4, 5;
+    5, 6, 1;
+    7, 1, 6;
+    1, 7, 2
+    ];
+
+numNodes = size(nodes,1);
+numElem = size(elem,1);
+
+ax = gca;
+ax.Toolbar.Visible = 'off';
+
+%fig = figure;
+
+hold on
+T = triangulation(elem,nodes);
+triplot(T,lineWidth=2,color='black')
+axis equal
+axis([-1.25,1.25,-0.75,0.75])
+yticks([-0.75,-0.5,-0.25,0,0.25,0.5,0.75])
+grid on
+box on
+
+plot(nodes(:,1),nodes(:,2),'o', MarkerSize = 20,...
+    MarkerFaceColor = 'white',MarkerEdgeColor='black',LineWidth=2)
+
+for i = 1:numNodes
+    text(nodes(i,1),nodes(i,2),num2str(i),...
+       Interpreter='latex',FontSize=15,HorizontalAlignment='center',...
+        FontWeight='bold')
+end
+
+for i = 1:numElem
+    barycenter = 1/3*sum(nodes(elem(i,:),:));
+text(barycenter(1,1),barycenter(1,2),['$$\Omega^{',num2str(i),'}$$'],...
+    HorizontalAlignment='center',interpreter='LaTeX',FontSize=20)
+end
+
+xlabel('$$x$$','FontSize',18,Interpreter='latex')
+ylabel('$$y$$','FontSize',18,Interpreter='latex',Rotation=360)
+
+hold off 
+
+exportgraphics(ax,"mesh-raw.png","Height",500,"Width",750,"PreserveAspectRatio","auto")
+
+%hold off
+
+
+%saveas(gcf,fileName,'png')
+
